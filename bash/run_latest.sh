@@ -3,7 +3,7 @@
 # builds latest zoxel_web and runs it
 #   assumed running from project folder directory
 
-# cd $HOME/zoxel/documents/zoxel_web
+cd ~/projects/zoxel-web
 
 # checks local ip
 source bash/check_local_ip.sh
