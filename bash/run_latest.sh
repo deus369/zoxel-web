@@ -1,12 +1,16 @@
 #!/bin/bash
 
+# build if latest updated website
+cd ~/projects/zoxel-web
+git pull && cc src/zoxel_web.c -o zoxel_web
+
+if [[ -f zoxel_web ]]; then
+    ./zoxel_web
+fi
+
+# Make sure
 # builds latest zoxel_web and runs it
 #   assumed running from project folder directory
-
-cd ~/projects/zoxel-web
-
 # checks local ip
-source bash/check_local_ip.sh
-
-#sudo cc zoxel_web.c -o zoxel_web && sudo ./zoxel_web
-cc src/zoxel_web.c -o zoxel_web && ./zoxel_web
+# source bash/check_local_ip.sh
+# ssh-add ~/.ssh/zoxel
