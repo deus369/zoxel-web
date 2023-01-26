@@ -1,9 +1,8 @@
 #! /bin/bash
 
-ssh-add $HOME/.ssh/zoxel
 cd ..
-
 echo "Inside Directory [$PWD]"
+ssh-add $HOME/.ssh/zoxel_web
 echo "-> Getting modified or updated git files."
 modified_and_new_files="$(git ls-files --modified --others --exclude-standard)"
 if [ -z "$modified_and_new_files" ]; then
