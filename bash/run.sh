@@ -1,8 +1,13 @@
 #!/bin/bash
-# run our zoxel_web
-
-sudo ./zoxel_web
-
-echo "Finished running server."
-
-sleep 12
+if [[ ! -f zoxel_web ]]; then
+    echo "  > zoxel web not found"
+    bash bash/build.sh
+fi
+if [[ -f zoxel_web ]]; then
+    echo "  > running zoxel web"
+    sudo ./zoxel_web
+else
+    echo "  > could not run zoxel web"
+fi
+echo "  > finished running zoxel web"
+# sleep 12

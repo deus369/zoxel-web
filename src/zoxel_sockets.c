@@ -40,9 +40,7 @@ void make_socket_non_blocking(int web_sock) {
 }
 
 int initialize_sockets() {
-    if (does_socket_exist) {
-        return 0;
-    }
+    if (does_socket_exist) return 0;
     struct sockaddr_in server;
     web_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (web_sock == -1) {
@@ -66,9 +64,7 @@ int initialize_sockets() {
 
 void start_listening() {
     listen(web_sock, 3);
-    if (!is_terminal_ui) {
-        puts("start_listening");
-    }
+    if (!is_terminal_ui) puts("start_listening");
 }
 
 extern int running;
@@ -116,9 +112,7 @@ char* build_http_response(const char* html_file_buffer) {
 
 int load_html() {
     char* html_file = load_file(html_index);
-    if (html_file == NULL) {
-        return 1;
-    }
+    if (html_file == NULL) return 1;
     if (has_loaded_html) {
         free(response);
     } else {
@@ -138,21 +132,15 @@ void update_html(char* html_filepath) {
 }
 
 void update_web() {
-    if (is_minify)
-        update_html(html_index_minify);
-    else
-        update_html(html_index);
+    if (is_minify) update_html(html_index_minify);
+    else update_html(html_index);
     accept_incoming_connections(web_sock, response);
 }
 
 int open_web() {
-    if (initialize_sockets()) {
-        return 1;
-    }
-    if (is_minify)
-        set_mod_time(html_index_minify);
-    else
-        set_mod_time(html_index);
+    if (initialize_sockets()) return 1;
+    if (is_minify) set_mod_time(html_index_minify);
+    else set_mod_time(html_index);
     load_html();
     return 0;
 }

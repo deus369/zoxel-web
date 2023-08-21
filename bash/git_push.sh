@@ -1,6 +1,5 @@
 #! /bin/bash
 
-cd ..
 echo "Inside Directory [$PWD]"
 ssh-add $HOME/.ssh/zoxel
 echo "-> Getting modified or updated git files."

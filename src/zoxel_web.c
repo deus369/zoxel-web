@@ -22,9 +22,7 @@ void handle_sigwinch(int sig) {
 }
 
 void display_text() {
-    if (!is_dirty) {
-        return;
-    }
+    if (!is_dirty) return;
     is_dirty = 0;
     clear_terminal();
     char text[1024] = ""; // initialize to empty string
@@ -81,8 +79,7 @@ void close_app() {
     close_web();
     restore_terminal_settings();
     if (is_terminal_ui) {
-        if (exit_reason != 255)
-            clear_terminal();
+        if (exit_reason != 255) clear_terminal();
     }
     if (exit_reason == 1) {
         printf("Exited app due to q key was pressed.\n");
@@ -102,8 +99,7 @@ void restart_app() {
 
 void process_arguments(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--log") == 0)
-        {
+        if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--log") == 0) {
             is_terminal_ui = 0;
         }
     }
