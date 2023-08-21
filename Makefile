@@ -31,6 +31,7 @@ run:
 
 install:
 	@echo "	make is installing zoxel-web"
+	bash bash/install_startup.sh
 
 uninstall:
 	@echo "	make is uninstalling zoxel-web"

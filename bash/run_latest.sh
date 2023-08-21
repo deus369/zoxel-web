@@ -1,6 +1,8 @@
 #!/bin/bash
 # build if latest updated website
-# cd ~/projects/zoxel-web
+
+# cd is used for startup script
+cd ~/projects/zoxel-web
 git pull && bash bash/build.sh
 bash bash/run.sh
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source set_vars.sh
+source bash/set_vars.sh
 
 # Check if the $install_location file exists
 if [ ! -f $install_location ]
@@ -23,4 +23,4 @@ else
     echo "Command added to $install_location"
 fi
 
-sleep 12
+# sleep 12

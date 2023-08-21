@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd .. # go to project folder
 project_directory=$(pwd)
 script_location=$project_directory/bash/run_latest.sh # $HOME/zoxel/documents/zoxel_web/run_latest.sh
 install_location=$HOME/.profile #.bash_profile
