@@ -35,15 +35,12 @@ install:
 uninstall:
 	@echo "	make is uninstalling zoxel-web"
 
-git-pull:
-	@echo "	make is pushing zoxel-web"
-
 git-push:
 	@echo "	make is pushing zoxel-web"
 	bash bash/git_push.sh
 
 git-pull:
-	@echo "	make is pushing zoxel-web"
+	@echo "	make is pulling zoxel-web"
 	git pull
 
 codeberg:
