@@ -2,7 +2,7 @@
 
 source bash/set_vars.sh
 
-echo "  > installing bash line [$run_command]"
+echo "  > installing startup bash command"
 
 # Check if the $install_location file exists
 if [ ! -f $install_location ]

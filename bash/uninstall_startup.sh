@@ -2,7 +2,7 @@
 
 source bash/set_vars.sh
 
-echo "  > uninstalling bash line [$run_command]"
+echo "  > uninstalling startup bash command"
 
 if [ ! -f $install_location ]
 then
