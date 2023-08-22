@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "  > uninstalling bash line [$run_command]"
+source bash/set_vars.sh
 
-source set_vars.sh
+echo "  > uninstalling bash line [$run_command]"
 
 if [ ! -f $install_location ]
 then
@@ -17,8 +17,9 @@ then
     # Command is present, so remove it
     converted_string=$(echo "$run_command" | sed -e 's/[$]/\\$/g' -e 's/[\/]/\\\//g')
     sed -i "/$converted_string/d" $install_location
-    echo "  - command removed from [$install_location] [$run_command] -> [$converted_string]"
+    echo "  - command removed from [$install_location]"
+    echo "      - command converted_string was [$converted_string]"
 else
     # Command is not present
-    echo "  > command not found in [$install_location] [$run_command]"
+    echo "  > command not found in [$install_location]"
 fi
