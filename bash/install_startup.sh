@@ -1,8 +1,8 @@
 #!/bin/bash
 
-source bash/set_vars.sh
-
 echo "  > installing bash line [$run_command]"
+
+source bash/set_vars.sh
 
 # Check if the $install_location file exists
 if [ ! -f $install_location ]
@@ -24,5 +24,3 @@ else
     echo $run_command >> $install_location
     echo "  + command added to [$install_location]"
 fi
-
-# sleep 12

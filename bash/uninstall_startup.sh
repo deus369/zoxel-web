@@ -1,11 +1,13 @@
 #!/bin/bash
 
+echo "  > uninstalling bash line [$run_command]"
+
 source set_vars.sh
 
 if [ ! -f $install_location ]
 then
-    echo ".bash_profile file does not exist."
-    sleep 12
+    echo "  > [$install_location] file does not exist"
+    sleep 3
     exit
 fi
 
@@ -15,11 +17,8 @@ then
     # Command is present, so remove it
     converted_string=$(echo "$run_command" | sed -e 's/[$]/\\$/g' -e 's/[\/]/\\\//g')
     sed -i "/$converted_string/d" $install_location
-    echo "Command removed from .bash_profile [$run_command] -> [$converted_string]"
+    echo "  - command removed from [$install_location] [$run_command] -> [$converted_string]"
 else
     # Command is not present
-    echo "Command not found in .bash_profile [$run_command]"
+    echo "  > command not found in [$install_location] [$run_command]"
 fi
-
-
-sleep 22

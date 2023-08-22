@@ -35,6 +35,7 @@ install:
 
 uninstall:
 	@echo "	make is uninstalling zoxel-web"
+	bash bash/uninstall_startup.sh
 
 git-push:
 	@echo "	make is pushing zoxel-web"

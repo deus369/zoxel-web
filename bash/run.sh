@@ -5,9 +5,8 @@ if [[ ! -f zoxel_web ]]; then
 fi
 if [[ -f zoxel_web ]]; then
     echo "  > running zoxel web"
-    sudo ./zoxel_web
+    ./zoxel_web # sudo
 else
     echo "  > could not run zoxel web"
 fi
 echo "  > finished running zoxel web"
-# sleep 12
