@@ -7,6 +7,8 @@
 #include "zoxel_io.c"
 #include "zoxel_sockets.c"
 // #include <vte/vte.h> // for VteTerminal
+// #define include_user_input
+// #define live_html_data
 
 // variables
 int running = 1;
@@ -105,30 +107,40 @@ void process_arguments(int argc, char *argv[]) {
     }
 }
 
+void quit_app() {
+    running = 0;
+    exit_reason = 1;
+}
+
+void toggle_minify() {
+    is_minify = !is_minify;
+    if (is_minify) set_text("Toggled Minify [ON]\n");
+    else set_text("Toggled Minify [OFF]\n");
+    sleep(3);
+    restart_app();
+}
+
+void handle_user_input() {
+    char key_press = get_keyboard_key(is_terminal_ui);
+    if (key_press == 'q') quit_app();
+    else if (key_press == 'r') restart_app();
+    else if (key_press == 'm') toggle_minify();
+}
+
 int main(int argc, char *argv[]) {
     process_arguments(argc, argv);
     handle_events();
     open_app();
     while (running) {
-        if (is_terminal_ui) {
-            display_text();
-        }
+        #ifdef live_html_data
+            if (is_minify) update_html(html_index_minify);
+            else update_html(html_index);
+        #endif
         update_web();
-        char key_press = get_keyboard_key(is_terminal_ui);
-        if (key_press == 'q') {
-            running = 0;
-            exit_reason = 1;
-        } else if (key_press == 'r') {
-            restart_app();
-        } else if (key_press == 'm') {
-            is_minify = !is_minify;
-            if (is_minify)
-                set_text("Toggled Minify [ON]\n");
-            else
-                set_text("Toggled Minify [OFF]\n");
-            sleep(3);
-            restart_app();
-        }
+        if (is_terminal_ui) display_text();
+        #ifdef include_user_input
+            handle_user_input();
+        #endif
     }
     close_app();
     return 0;

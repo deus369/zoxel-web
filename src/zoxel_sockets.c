@@ -29,12 +29,12 @@ void make_socket_non_blocking(int web_sock) {
     int flags;
     flags = fcntl(web_sock, F_GETFL, 0);
     if (flags == -1) {
-        perror("fcntl");
+        if (!is_terminal_ui) perror("fcntl");
         return;
     }
     flags |= O_NONBLOCK;
     if (fcntl(web_sock, F_SETFL, flags) == -1) {
-        perror("fcntl");
+        if (!is_terminal_ui) perror("fcntl");
         return;
     }
 }
@@ -51,14 +51,12 @@ int initialize_sockets() {
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(server_port);
     if (bind(web_sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
-        perror("bind failed. Error");
+        if (!is_terminal_ui) perror("bind failed. Error");
         return 1;
     }
     does_socket_exist = 1;
     make_socket_non_blocking(web_sock);
-    if (!is_terminal_ui) {
-        puts("bind done");
-    }
+    if (!is_terminal_ui) puts("bind done");
     return 0;
 }
 
@@ -67,9 +65,7 @@ void start_listening() {
     if (!is_terminal_ui) puts("start_listening");
 }
 
-extern int running;
-extern int exit_reason;
-
+// debug check if this stalls
 int accept_incoming_connections(int web_sock, char *response) {
     int client_sock, c, read_size;
     struct sockaddr_in client;
@@ -79,25 +75,19 @@ int accept_incoming_connections(int web_sock, char *response) {
     client_sock = accept(web_sock, (struct sockaddr *) &client, (socklen_t *) &c);
     if (client_sock < 0) {
         if (!(errno == EAGAIN || errno == EWOULDBLOCK)) {
-            if (!is_terminal_ui) {
-                perror("accept_incoming_connections: accept failed");
-            }
+            if (!is_terminal_ui) perror("accept_incoming_connections: accept failed");
         }
         return 1;
     }
-    if (is_terminal_ui == 0) {
-        puts("Connection accepted");
-    }
+    if (!is_terminal_ui) puts("Connection accepted");
     num_clients++;
     is_dirty = 1;
     // Receive a message from client
     if ((read_size = recv(client_sock, client_message, 2000, 0)) > 0) {
-        if (is_terminal_ui == 0) {
-            puts("Sending response to client.");
-        }
+        if (!is_terminal_ui) puts("Sending response to client.");
         write(client_sock, response, strlen(response));     // Send the response packet to the client
     } else if (read_size == -1) {
-        perror("recv failed");
+        if (!is_terminal_ui) perror("recv failed");
     }
     // Close the client socket
     close(client_sock);
@@ -132,8 +122,6 @@ void update_html(char* html_filepath) {
 }
 
 void update_web() {
-    if (is_minify) update_html(html_index_minify);
-    else update_html(html_index);
     accept_incoming_connections(web_sock, response);
 }
 

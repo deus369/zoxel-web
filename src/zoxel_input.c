@@ -28,7 +28,7 @@ void save_terminal_settings_log() {
     new_tio.c_cc[VMIN] = 0;
     new_tio.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
-    puts("Setting terminal settings to logging.");
+    if (!is_terminal_ui) puts("Setting terminal settings to logging.");
 }
 
 void restore_terminal_settings() {

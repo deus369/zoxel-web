@@ -13,7 +13,6 @@ int was_modified(char* path) {
     struct stat current_mod_time;
     // Get the current modification time of the file
     stat(path, &current_mod_time);
-
     int changed = initial_mod_time.st_mtime != current_mod_time.st_mtime;
     if (changed) {
         // initial_mod_time = current_mod_time;
@@ -26,7 +25,7 @@ char* load_file(const char* filename) {
     // Open the HTML file
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
-        perror("fopen failed");
+        if (!is_terminal_ui) perror("fopen failed");
         return NULL;
     }
 
