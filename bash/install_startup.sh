@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# bash -ic /home/deus/projects/zoxel-web/bash/run_latest.sh
+
 source bash/set_vars.sh
 echo "  > installing startup bash command"
 
