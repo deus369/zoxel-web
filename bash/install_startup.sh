@@ -5,6 +5,8 @@
 source bash/set_vars.sh
 echo "  > installing startup bash command"
 
+# add  --full-screen to desktop file
+
 # # Check if the $install_location file exists
 # if [ ! -f $install_location ]
 # then

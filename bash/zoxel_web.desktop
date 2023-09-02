@@ -4,4 +4,4 @@ Name=Zoxel Web
 Type=Application
 Icon=utilities-terminal
 Terminal=true
-Exec=gnome-terminal --full-screen -- /home/deus/projects/zoxel-web/bash/run_latest.sh
+Exec=gnome-terminal -- /home/deus/projects/zoxel-web/bash/run_latest.sh
