@@ -23,3 +23,7 @@ Some poetry that helps guide my way in this dark world.
 > [[A Simple Task on Planet X-4028B](documents/poems/poem_3.md)]
 
 > [[Amazing Potential](documents/reviews/review_0.md)]
+
+Make sure to install no overview on startup for ubuntu servers
+
+https://ubuntuhandbook.org/index.php/2021/07/activities-overview-login-ubuntu-gnome-40/
