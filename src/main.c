@@ -1,3 +1,7 @@
+// === zoxel web ===
+//
+//  > to test go to 192.68.0.1:8080
+//
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>     // for signal function
@@ -80,9 +84,7 @@ void open_app() {
 void close_app() {
     close_web();
     restore_terminal_settings();
-    if (is_terminal_ui) {
-        if (exit_reason != 255) clear_terminal();
-    }
+    if (is_terminal_ui) if (exit_reason != 255) clear_terminal();
     if (exit_reason == 1) {
         printf("Exited app due to q key was pressed.\n");
     } else if (exit_reason == 2) {
@@ -101,9 +103,7 @@ void restart_app() {
 
 void process_arguments(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--log") == 0) {
-            is_terminal_ui = 0;
-        }
+        if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--log") == 0) is_terminal_ui = 0;
     }
 }
 

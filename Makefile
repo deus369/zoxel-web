@@ -24,10 +24,19 @@ CFLAGS =
 LDLIBS =
 
 $(TARGET): $(SRCS)
-	bash bash/run.sh
+	bash bash/build.sh
 
 run:
-	./$(TARGET)
+	bash bash/run.sh
+
+run-dev:
+	bash bash/run_debug.sh
+
+open:
+	open http://127.0.0.1:8080
+
+open-duck:
+	open http://zoxel.duckdns.org
 
 install:
 	@echo "	make is installing zoxel-web"
@@ -59,6 +68,10 @@ help:
 	@echo "  make <target>"
 	@echo "    <empty>  			builds release"
 	@echo "    run				runs $(TARGET)"
+	@echo "    run-dev			runs $(TARGET) --log"
+	@echo "  > open"
+	@echo "    open			opens http://127.0.0.1:8080"
+	@echo "    open-duck			opens http://zoxel.duckdns.org"
 	@echo "  > setup"
 	@echo "    install			installs zoxel-web"
 	@echo "    uninstall			inuninstalls zoxel-web"
