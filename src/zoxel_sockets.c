@@ -1,11 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h> // for malloc, free
-#include <string.h> // for strlen
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>     // for write function
 #include <fcntl.h>      // for fcntl function
 #include <errno.h>
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+    // #include <netinet/in.h>
+    // #include <netdb.h>
+#endif
 
 int num_clients = 0;
 int web_sock;
@@ -25,68 +29,143 @@ void close_socket() {
     }
 }
 
-void make_socket_non_blocking(int web_sock) {
-    int flags;
-    flags = fcntl(web_sock, F_GETFL, 0);
+unsigned char make_socket_non_blocking(int web_sock) {
+#ifdef _WIN32
+    u_long mode = 1;
+    if (ioctlsocket(web_sock, FIONBIO, &mode) != NO_ERROR) {
+        fprintf(stderr, " ! ioctlsocket failed: %d\n", WSAGetLastError());
+        return 0;
+    }
+    zox_log(" + success, socket non blocking");
+#else
+    int flags = fcntl(web_sock, F_GETFL, 0);
     if (flags == -1) {
+        zox_log(" ! failed making non block");
         if (!is_terminal_ui) perror("fcntl");
-        return;
+        return 0;
     }
     flags |= O_NONBLOCK;
     if (fcntl(web_sock, F_SETFL, flags) == -1) {
+        zox_log(" ! failed making non block");
         if (!is_terminal_ui) perror("fcntl");
-        return;
+        return 0;
     }
+#endif
+    return 1;
 }
 
 int initialize_sockets() {
     if (does_socket_exist) return 0;
+#ifdef _WIN32
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        fprintf(stderr, "WSAStartup failed: %d\n", WSAGetLastError());
+        return 1;
+    }
+#endif
     struct sockaddr_in server;
     web_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (web_sock == -1) {
-        printf("Could not create socket");
+        fprintf(stderr, " ! could not create socket: %s\n", strerror(errno));
         return 1;
     }
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(server_port);
     if (bind(web_sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
-        if (!is_terminal_ui) perror("bind failed. Error");
+        zox_log(" ! bind failed [%i]", server_port);
+        perror("    ! error: ");
+        return 1;
+    }
+    if (!make_socket_non_blocking(web_sock)) {
+        zox_log(" ! socket blocks");
         return 1;
     }
     does_socket_exist = 1;
-    make_socket_non_blocking(web_sock);
-    if (!is_terminal_ui) puts("bind done");
+    // Retrieve and print the IP address
+    if (!is_terminal_ui) {
+        char ip_str[INET_ADDRSTRLEN];
+        if (inet_ntop(AF_INET, &server.sin_addr, ip_str, sizeof(ip_str)) == NULL) {
+            fprintf(stderr, " ! could not convert IP address to string: %s\n", strerror(errno));
+            return 1;
+        }
+        zox_log(" + socket initialized at IP [%s] and port [%i]", ip_str, server_port);
+    }
     return 0;
 }
 
 void start_listening() {
+    zox_log(" > starting listening at [%i]", web_sock);
     listen(web_sock, 3);
-    if (!is_terminal_ui) puts("start_listening");
+    zox_log(" > started listening");
 }
+
+#ifdef _WIN32
+// Helper function to get WSA error string
+const char* wsa_strerror(int err) {
+    static char buf[256];
+    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                   NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                   buf, sizeof(buf), NULL);
+    return buf;
+}
+#endif
 
 // debug check if this stalls
 int accept_incoming_connections(int web_sock, char *response) {
-    int client_sock, c, read_size;
     struct sockaddr_in client;
     char client_message[2000];
-    c = sizeof(struct sockaddr_in);
-    // accept connection from an incoming client
-    client_sock = accept(web_sock, (struct sockaddr *) &client, (socklen_t *) &c);
+    int c = sizeof(struct sockaddr_in);
+
+    // Accept connection from an incoming client
+#ifdef _WIN32
+    SOCKET client_sock = accept(web_sock, (struct sockaddr *)&client, &c);
+    if (client_sock == INVALID_SOCKET) {
+#else
+    int client_sock = accept(web_sock, (struct sockaddr *) &client, (socklen_t *) &c);
     if (client_sock < 0) {
-        if (!(errno == EAGAIN || errno == EWOULDBLOCK)) {
-            if (!is_terminal_ui) perror("accept_incoming_connections: accept failed");
+#endif
+        int error =
+#ifdef _WIN32
+            WSAGetLastError();
+#else
+            errno;
+#endif
+        close(client_sock);
+        if (!(error == EAGAIN || error == EWOULDBLOCK || 10035 == error || error == 11)) {
+            zox_log(" ! accept failed [%i]", error);
+            if (!is_terminal_ui) {
+                fprintf(stderr, " ! accept failed: [%i] %s\n", error,
+#ifdef _WIN32
+                    wsa_strerror(error));
+#else
+                    strerror(error));
+#endif
+            }
+            return 1;
+        } else {
+            // zox_log(" > no client [%i]", error);
+            return 0;
         }
-        return 1;
     }
-    if (!is_terminal_ui) puts("Connection accepted");
+    zox_log(" > Connection accepted\n");
     num_clients++;
     is_dirty = 1;
     // Receive a message from client
-    if ((read_size = recv(client_sock, client_message, 2000, 0)) > 0) {
-        if (!is_terminal_ui) puts("Sending response to client.");
-        write(client_sock, response, strlen(response));     // Send the response packet to the client
-    } else if (read_size == -1) {
+#ifdef _WIN32
+    int read_size = recv(client_sock, client_message, sizeof(client_message) - 1, 0);
+#else
+    int read_size = recv(client_sock, client_message, sizeof(client_message) - 1, 0);
+#endif
+    //if (read_size > 0) {
+        zox_log(" > Sending response to client\n");
+#ifdef _WIN32
+        send(client_sock, response, (int) strlen(response), 0);
+#else
+        write(client_sock, response, strlen(response));
+#endif
+    //}
+    if (read_size == -1) {
         if (!is_terminal_ui) perror("recv failed");
     }
     // Close the client socket
@@ -122,6 +201,7 @@ void update_html(char* html_filepath) {
 }
 
 void update_web() {
+    // zox_log(" > accept_incoming_connections [%i]", server_port);
     accept_incoming_connections(web_sock, response);
 }
 
@@ -130,6 +210,7 @@ int open_web() {
     if (is_minify) set_mod_time(html_index_minify);
     else set_mod_time(html_index);
     load_html();
+    zox_log(" + opened web hosting");
     return 0;
 }
 

@@ -1,26 +1,26 @@
 #include <stdarg.h> // for va_list, va_start, and va_end
 #include <stdlib.h>     // for system function
 #include <unistd.h>     // for write function
+#include <sys/ioctl.h>  // for struct winsize and the TIOCGWINSZ
 
 int is_dirty = 1;
 int is_terminal_ui = 1;
 
-struct terminal_size {
-  int rows;
-  int cols;
-};
+typedef struct {
+  int x;
+  int y;
+} int2;
 
-struct terminal_size get_terminal_size() {
-  struct winsize w;
+int2 get_terminal_size() {
+  int2 w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-  struct terminal_size size = {w.ws_row, w.ws_col};
-  return size;
+  return w;
 }
 
 void clear_terminal() {
     system("clear");
     // printf("\033[H\033[J");
-    // struct terminal_size size = get_terminal_size();
+    // struct int2 size = get_terminal_size();
     //printf("\033[3J"); // clear the screen and the scrollback buffer
     //printf("\033[0;0H"); // move the cursor to the top left
     //printf("\033[%d;1H", size.rows); // move the cursor to the bottom of the screen
@@ -51,9 +51,9 @@ void add_text(char *text, char *line, ...) {
 }
 
 void display_centered_text(char *text) {
-    struct terminal_size size = get_terminal_size();
-    int row = (size.rows / 2); //  - 1;
-    int col = size.cols / 2;
+    const int2 size = get_terminal_size();
+    int row = (size.x / 2); //  - 1;
+    int col = size.y / 2;
     int text_len = strlen(text);
     int i = 0;
     while (i < text_len) {

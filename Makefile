@@ -24,10 +24,13 @@ CFLAGS =
 LDLIBS =
 
 $(TARGET): $(SRCS)
-	bash bash/build.sh
+	@ bash bash/build.sh
 
 run:
-	bash bash/run.sh
+	@ bash bash/run.sh
+
+run-wsl:
+	@ bash bash/run_wsl.sh
 
 run-dev:
 	bash bash/run_debug.sh
@@ -60,6 +63,12 @@ codeberg:
 github:
 	open https://github.com/deus369/zoxel-web &
 
+test:
+	@bash bash/check_listening.sh
+
+kill:
+	@bash bash/terminate.sh
+
 # lost ones #
 
 help:
@@ -69,6 +78,7 @@ help:
 	@echo "    <empty>  			builds release"
 	@echo "    run				runs $(TARGET)"
 	@echo "    run-dev			runs $(TARGET) --log"
+	@echo "    test				checks is running with netstat"
 	@echo "  > open"
 	@echo "    open			opens http://127.0.0.1:8080"
 	@echo "    open-duck			opens http://zoxel.duckdns.org"
