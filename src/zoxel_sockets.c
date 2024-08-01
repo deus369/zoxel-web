@@ -14,7 +14,8 @@
 int num_clients = 0;
 int web_sock;
 int does_socket_exist = 0;
-int server_port = 8080; // 80 - im rerouting this traffic from 80 to 8080 internally
+// remember: browser uses port 80
+int server_port = 80; // im rerouting this traffic from 80 to 8080 internally
 int is_minify = 1;
 char* html_index = "index.html";
 char* html_index_minify = "index_mini.html";
@@ -111,6 +112,20 @@ const char* wsa_strerror(int err) {
 }
 #endif
 
+void close_client_socket(
+#ifdef _WIN32
+    SOCKET sock
+#else
+    int sock
+#endif
+) {
+#ifdef _WIN32
+    closesocket(sock);
+#else
+    close(sock);
+#endif
+}
+
 // debug check if this stalls
 int accept_incoming_connections(int web_sock, char *response) {
     struct sockaddr_in client;
@@ -131,7 +146,7 @@ int accept_incoming_connections(int web_sock, char *response) {
 #else
             errno;
 #endif
-        close(client_sock);
+        close_client_socket(client_sock);
         if (!(error == EAGAIN || error == EWOULDBLOCK || 10035 == error || error == 11)) {
             zox_log(" ! accept failed [%i]", error);
             if (!is_terminal_ui) {
@@ -148,28 +163,33 @@ int accept_incoming_connections(int web_sock, char *response) {
             return 0;
         }
     }
-    zox_log(" > Connection accepted\n");
+
+    char *client_ip = inet_ntoa(client.sin_addr);
+    zox_log(" > Connection accepted from [%s]", client_ip);
     num_clients++;
     is_dirty = 1;
+
     // Receive a message from client
 #ifdef _WIN32
     int read_size = recv(client_sock, client_message, sizeof(client_message) - 1, 0);
 #else
     int read_size = recv(client_sock, client_message, sizeof(client_message) - 1, 0);
 #endif
-    //if (read_size > 0) {
-        zox_log(" > Sending response to client\n");
+    zox_log(" > Received %d bytes from client", read_size);
+    if (read_size >= 0) {
+        zox_log(" > Sending response to client");
 #ifdef _WIN32
         send(client_sock, response, (int) strlen(response), 0);
 #else
         write(client_sock, response, strlen(response));
 #endif
-    //}
-    if (read_size == -1) {
+    } else if (read_size == -1) {
         if (!is_terminal_ui) perror("recv failed");
     }
+
     // Close the client socket
-    close(client_sock);
+    close_client_socket(client_sock);
+
     return 0;   // no error
 }
 

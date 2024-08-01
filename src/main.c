@@ -8,10 +8,9 @@
 #endif
 #define sleep_time 1
 #include <stdio.h>
-#include <string.h>
-#include <signal.h>     // for signal function
-#include <stdlib.h>
-extern void zox_log(char *text, ...);
+#include <string.h>// extern void zox_log(char *text, ...);
+// my scripts
+#include "logs.c"
 #ifndef zox_disable_terminal
     #include "zoxel_terminal.c"
     #include "zoxel_input.c"
@@ -21,6 +20,7 @@ extern void zox_log(char *text, ...);
 #endif
 #include "zoxel_io.c"
 #include "zoxel_sockets.c"
+// windows.h after sockets includes
 #ifdef _WIN32
 #include <windows.h>
 #define sleep(ms) Sleep(ms)
@@ -40,17 +40,6 @@ void on_interupt_app(int sig) {
 
 void handle_sigwinch(int sig) {
     is_dirty = 1;   // refresh ui when terminal resizes
-}
-
-void zox_log(char *text, ...) {
-    if (is_terminal_ui) return;
-    va_list list;
-    va_start(list, text);
-    char msg2[256] = { 0 };
-    vsnprintf(msg2, sizeof(msg2), text, list);
-    printf("%s\n", msg2);
-    va_end(list);
-    fflush(stdout);
 }
 
 void display_text() {
@@ -154,6 +143,11 @@ void process_arguments(int argc, char *argv[]) {
         else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0) {
             server_port = parse_int(argv[i + 1], 8080);
             zox_log(" + port set to %i", server_port);
+        } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+            zox_log(" > zoxel web help menu");
+            zox_log("   -> -l --log for normal console output");
+            zox_log("   -> -p --port to set a port number");
+            exit(0);
         }
     }
 }
