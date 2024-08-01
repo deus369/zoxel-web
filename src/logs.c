@@ -1,4 +1,4 @@
-#include <stdlib.h>     // for system function
+#include <stdlib.h> // for system function
 #include <stdarg.h> // for va_list, va_start, and va_end
 extern unsigned char is_terminal_ui;
 

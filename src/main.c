@@ -25,6 +25,7 @@
 #include <windows.h>
 #define sleep(ms) Sleep(ms)
 #endif
+#include "signal.c"
 // #include <vte/vte.h> // for VteTerminal
 // #define include_user_input
 // #define live_html_data
@@ -32,15 +33,6 @@
 // variables
 int running = 1;
 int exit_reason = 0;
-
-void on_interupt_app(int sig) {
-    running = 0;
-    exit_reason = 2;
-}
-
-void handle_sigwinch(int sig) {
-    is_dirty = 1;   // refresh ui when terminal resizes
-}
 
 void display_text() {
     if (!is_terminal_ui) return;
@@ -72,13 +64,6 @@ void set_text(char* display_text) {
     add_text(text, display_text);
     display_centered_text(text);
     fflush(stdout); // flush the output buffer
-#endif
-}
-
-void handle_events() {
-#ifndef _WIN32
-    signal(SIGINT, on_interupt_app);
-    signal(SIGWINCH, handle_sigwinch);
 #endif
 }
 

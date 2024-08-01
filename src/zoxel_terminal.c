@@ -3,8 +3,8 @@
 #include <unistd.h>     // for write function
 #include <sys/ioctl.h>  // for struct winsize and the TIOCGWINSZ
 
-int is_dirty = 1;
-int is_terminal_ui = 1;
+unsigned char is_dirty = 1;
+unsigned char is_terminal_ui = 1;
 
 typedef struct {
   int x;
