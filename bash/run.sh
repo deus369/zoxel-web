@@ -1,16 +1,23 @@
 #!/bin/bash
 script_directory="$(dirname "$(realpath "$0")")"
 project_directory="$script_directory/.."
+cd $project_directory
 build_file="$project_directory/zoxel_web"
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     build_file="$build_file.exe"
 fi
 
 while true; do
+    git pull
+    bash $script_directory/build.sh
     if [[ ! -f $build_file ]]; then
         echo "  > zoxel web not found"
-        bash $project_directory/bash/build.sh
+        sleep 2
+        continue
     fi
+    # kill any previous
+    bash $script_directory/kill.sh
+    # run zoxel-web service
     if [[ -f $build_file ]]; then
         echo "  > running zoxel web"
         $build_file -l
