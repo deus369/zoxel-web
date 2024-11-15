@@ -19,7 +19,6 @@ ifeq ($(SYSTEM),Windows)
 else
     SRCS := $(shell find src/ -type f \( -name "*.c" -o -name "*.h" \))
 endif
-# OBJS = ../src/main.c
 CFLAGS =
 LDLIBS =
 
@@ -33,35 +32,35 @@ run-wsl:
 	@ bash bash/run_wsl.sh
 
 run-dev:
-	bash bash/run_debug.sh
+	@ bash bash/run_debug.sh
 
-open:
-	open http://127.0.0.1:8080
+open-local:
+	@ open http://127.0.0.1:8080
 
-open-duck:
-	open http://zoxel.duckdns.org
+open-live:
+	@ open http://zoxel.duckdns.org
 
 install:
 	@echo "	make is installing zoxel-web"
-	bash bash/install_startup.sh
+	@ bash bash/install.sh
 
 uninstall:
 	@echo "	make is uninstalling zoxel-web"
-	bash bash/uninstall_startup.sh
+	@ bash bash/uninstall.sh
 
 git-push:
 	@echo "	make is pushing zoxel-web"
-	bash bash/git_push.sh
+	@ bash bash/git_push.sh
 
 git-pull:
 	@echo "	make is pulling zoxel-web"
-	git pull
+	@ git pull
 
 codeberg:
-	open https://codeberg.org/deus/zoxel-web &
+	@ open https://codeberg.org/deus/zoxel-web &
 
 github:
-	open https://github.com/deus369/zoxel-web &
+	@ open https://github.com/deus369/zoxel-web &
 
 test:
 	@bash bash/check_listening.sh

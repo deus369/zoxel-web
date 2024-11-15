@@ -1,6 +1,7 @@
 #!/bin/bash
 # bash -ic /home/deus/projects/zoxel-web/bash/run_latest.sh
-source bash/set_vars.sh
+script_directory="$(dirname "$(realpath "$0")")"
+source "$script_directory/_core.sh"
 desktop_filepath="$PWD/bash/$desktop_filename"
 run_script_path="$PWD/bash/run_latest.sh"
 

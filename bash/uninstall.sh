@@ -1,7 +1,12 @@
 #!/bin/bash
-
-source bash/set_vars.sh
+script_directory="$(dirname "$(realpath "$0")")"
+source "$script_directory/_core.sh"
 echo "  > uninstalling startup bash command"
+echo "  > removing [$desktop_install_path/$desktop_filename]"
+rm $desktop_install_path/$desktop_filename
+echo "  > removing [$HOME/.config/autostart/$desktop_filename]"
+rm "$HOME/.config/autostart/$desktop_filename"
+
 
 # if [ ! -f $install_location ]
 # then
@@ -22,9 +27,3 @@ echo "  > uninstalling startup bash command"
 #     # Command is not present
 #     echo "  > command not found in [$install_location]"
 # fi
-
-echo "  > removing [$desktop_install_path/$desktop_filename]"
-rm $desktop_install_path/$desktop_filename
-
-echo "  > removing[$HOME/.config/autostart/$desktop_filename]"
-rm "$HOME/.config/autostart/$desktop_filename"

@@ -1,20 +1,28 @@
 #!/bin/bash
-
 build_file="zoxel_web"
-
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     build_file="$build_file.exe"
 fi
 
-if [[ ! -f $build_file ]]; then
-    echo "  > zoxel web not found"
-    bash bash/build.sh
-fi
-
-if [[ -f $build_file ]]; then
-    echo "  > running zoxel web"
-    ./$build_file # sudo
-else
-    echo "  > could not run zoxel web"
-fi
-echo "  > finished running zoxel web"
+while true; do
+    if [[ ! -f $build_file ]]; then
+        echo "  > zoxel web not found"
+        bash bash/build.sh
+    fi
+    if [[ -f $build_file ]]; then
+        echo "  > running zoxel web"
+        ./$build_file -l
+        # Check the exit status to determine if it crashed
+        if [[ $? -ne 0 ]]; then
+            echo "  > zoxel web crashed, restarting..."
+        else
+            echo "  > finished running zoxel web"
+            break  # Exit the loop if it finished successfully
+        fi
+    else
+        echo "  > could not run zoxel web"
+        break  # Exit the loop if the build file still cannot be found
+    fi
+    # Optional: Add a delay to avoid a tight loop in case of frequent crashes
+    sleep 2
+done
