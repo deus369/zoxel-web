@@ -1,6 +1,6 @@
 #!/bin/bash
 script_directory="$(dirname "$(realpath "$0")")"
-project_directory=="$script_directory/../"
+project_directory=="$script_directory/.."
 build_file="$project_directory/zoxel_web"
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     build_file="$build_file.exe"
@@ -13,7 +13,7 @@ while true; do
     fi
     if [[ -f $build_file ]]; then
         echo "  > running zoxel web"
-        ./$build_file -l
+        bash $build_file -l
         # Check the exit status to determine if it crashed
         if [[ $? -ne 0 ]]; then
             echo "  > zoxel web crashed, restarting..."
