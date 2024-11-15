@@ -1,6 +1,6 @@
 #!/bin/bash
 script_directory="$(dirname "$(realpath "$0")")"
-project_directory=="$script_directory/.."
+project_directory="$script_directory/.."
 build_file="$project_directory/zoxel_web"
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     build_file="$build_file.exe"
