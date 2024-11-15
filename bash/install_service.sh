@@ -4,15 +4,15 @@
 
 # Variables
 SERVICE_NAME="zoxel-web.service"
-SCRIPT_PATH="/zoxel-web/bash/run.sh"
+SCRIPT_PATH="/root/zoxel-web/bash/run.sh"
 USER="root"  # Change this to your desired user
 GROUP="root"  # Change this to your desired group
 
 # Check if the script exists
-if [ ! -f "$SCRIPT_PATH" ]; then
-  echo "Error: The script $SCRIPT_PATH does not exist!"
-  exit 1
-fi
+#if [ ! -f "$SCRIPT_PATH" ]; then
+#  echo "Error: The script $SCRIPT_PATH does not exist!"
+#  exit 1
+#fi
 
 # Create the systemd service file
 echo "Creating systemd service file..."
