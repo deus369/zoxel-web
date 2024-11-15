@@ -26,7 +26,6 @@ while true; do
             echo "  > zoxel web crashed, restarting..."
         else
             echo "  > finished running zoxel web"
-            break  # Exit the loop if it finished successfully
         fi
     else
         echo "  > could not run zoxel web"
