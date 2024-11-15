@@ -93,7 +93,7 @@ void open_app() {
         total_time += sleep_time;
         checks++;
         if (checks >= 10) {
-            zox_log(" ! max checks, cannot start server.\n")
+            zox_log(" ! max checks, cannot start server.\n");
             exit_reason = 3;
             running = 0;
             break;
