@@ -13,7 +13,7 @@ while true; do
     fi
     if [[ -f $build_file ]]; then
         echo "  > running zoxel web"
-        bash $build_file -l
+        $build_file -l
         # Check the exit status to determine if it crashed
         if [[ $? -ne 0 ]]; then
             echo "  > zoxel web crashed, restarting..."
