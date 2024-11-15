@@ -83,6 +83,7 @@ void open_app() {
     sleep(sleep_time);
     begin_open_app();
     float total_time = 0;
+    unsigned char checks = 0;
     while (open_web()) {
         char text[256];
         sprintf(text, "Opening Socket [%i] at [%f]", server_port, total_time);
@@ -90,9 +91,18 @@ void open_app() {
         zox_log(text);
         sleep(sleep_time);
         total_time += sleep_time;
+        checks++;
+        if (checks >= 10) {
+            zox_log(" ! max checks, cannot start server.\n")
+            exit_reason = 3;
+            running = 0;
+            break;
+        }
     }
-    start_listening();
-    is_dirty = 1;
+    if (running) {
+        start_listening();
+        is_dirty = 1;
+    }
 }
 
 void close_app() {
