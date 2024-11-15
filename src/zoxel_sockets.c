@@ -210,7 +210,7 @@ int respond_to_client(int client_sock, char *client_message, int read_size) {
             if (send_file(client_sock, windows_zip_file_name, windows_zip_file_name)) {
                 zox_log(" ! Error sending build file [%s]", windows_zip_file_name);
             }
-        } else if (strcmp(url, linux_zip_file_name) == 0) {
+        } else if (strcmp(url, "/"linux_zip_file_name) == 0) {
             zox_log(" > sending build file [%s]", linux_zip_file_name);
             if (send_file(client_sock, linux_zip_file_name, linux_zip_file_name)) {
                 zox_log(" ! Error sending build file [%s]", linux_zip_file_name);
