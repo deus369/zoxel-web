@@ -10,7 +10,8 @@
     // #include <netinet/in.h>
     // #include <netdb.h>
 #endif
-
+#define windows_zip_file_name "zoxel_windows_x86_64.zip"
+#define linux_zip_file_name "zoxel_linux_x86_64.zip"
 int num_clients = 0;
 int web_sock;
 int does_socket_exist = 0;
@@ -204,8 +205,14 @@ int respond_to_client(int client_sock, char *client_message, int read_size) {
         // if file URL: /favicon.ico -> send back file
         if (strcmp(url, "/") == 0) {
             send_client_message(client_sock, response);
-        } else if (strcmp(url, "/zoxel_windows_x64.zip") == 0) {
-            send_file(client_sock, "builds/zoxel_windows_x64.zip", "zoxel_windows_x64.zip");
+        } else if (strcmp(url, windows_zip_file_name) == 0) {
+            if (send_file(client_sock, windows_zip_file_name, windows_zip_file_name)) {
+                zox_log(" ! Error sending build file [%s]", windows_zip_file_name);
+            }
+        } else if (strcmp(url, linux_zip_file_name) == 0) {
+            if (send_file(client_sock, linux_zip_file_name, windows_zip_file_name)) {
+                zox_log(" ! Error sending build file [%s]", linux_zip_file_name);
+            }
         } else if (strcmp(url, "/play") == 0) {
             // Send a simple HTTP response
             const char *response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\ntodo: live zoxel here\n";
