@@ -66,7 +66,7 @@ test:
 	@bash bash/check_listening.sh
 
 kill:
-	@bash bash/terminate.sh
+	@bash bash/kill.sh
 
 # lost ones #
 

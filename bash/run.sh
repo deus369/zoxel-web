@@ -16,6 +16,7 @@ while true; do
         continue
     fi
     # kill any previous
+    echo " > running kill.sh"
     bash $script_directory/kill.sh
     # run zoxel-web service
     if [[ -f $build_file ]]; then
