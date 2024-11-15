@@ -1,9 +1,18 @@
 #!/bin/bash
-
 # bash -ic /home/deus/projects/zoxel-web/bash/run_latest.sh
-
 source bash/set_vars.sh
+desktop_filepath="$PWD/bash/$desktop_filename"
+run_script_path="$PWD/bash/run_latest.sh"
+
 echo "  > installing startup bash command"
+echo " > new run path is [$run_script_path]"
+echo " > new run path is [$run_script_path]"
+echo "  > copying [$desktop_filepath] to [$desktop_install_path/$desktop_filename]"
+echo "  > copying [$desktop_filepath] to [$HOME/.config/autostart/$desktop_filename]"
+
+sed -i 's|^Exec=.*|Exec=gnome-terminal --full-screen -- '"$run_script_path"'|' "$desktop_filepath"
+cp "$desktop_filepath" "$desktop_install_path/$desktop_filename"
+cp "$desktop_filepath" "$HOME/.config/autostart/$desktop_filename"
 
 # add  --full-screen to desktop file
 
@@ -27,10 +36,3 @@ echo "  > installing startup bash command"
 #     echo $run_command >> $install_location
 #     echo "  + command added to [$install_location]"
 # fi
-
-echo "  > copying [bash/$desktop_filename] to [$desktop_install_path/$desktop_filename]"
-
-cp "bash/$desktop_filename" "$desktop_install_path/$desktop_filename"
-
-echo "  > copying [bash/$desktop_filename] to [$HOME/.config/autostart/$desktop_filename]"
-cp "bash/$desktop_filename" "$HOME/.config/autostart/$desktop_filename"
